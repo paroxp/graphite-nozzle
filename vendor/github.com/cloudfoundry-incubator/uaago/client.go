@@ -30,15 +30,17 @@ func NewClient(uaaUrl string) (*Client, error) {
 
 func (c *Client) GetAuthToken(username, password string, insecureSkipVerify bool) (string, error) {
 	data := url.Values{
-		"client_id":  {username},
-		"grant_type": {"client_credentials"},
+		"grant_type": {"password"},
+		"scope":      {""},
+		"username":   {username},
+		"password":   {password},
 	}
 
 	request, err := http.NewRequest("POST", fmt.Sprintf("%s/oauth/token", c.uaaUrl), strings.NewReader(data.Encode()))
 	if err != nil {
 		return "", err
 	}
-	request.SetBasicAuth(username, password)
+	request.SetBasicAuth("cf", "")
 	request.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	config := &tls.Config{InsecureSkipVerify: insecureSkipVerify}
